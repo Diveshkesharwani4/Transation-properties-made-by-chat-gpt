@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub Master Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES --- */
+        :root {
+            --primary-git: #F05032;
+            /* Git Red/Orange */
+            --primary-github: #24292e;
+            /* GitHub Black */
+            --accent: #0969da;
+            /* Link Blue */
+            --bg-body: #f6f8fa;
+            --bg-card: #ffffff;
+            --text-main: #24292f;
+            --text-muted: #57606a;
+            --border: #d0d7de;
+            --code-bg: #f6f8fa;
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --bg-body: #0d1117;
+            --bg-card: #161b22;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border: #30363d;
+            --code-bg: #21262d;
+            --primary-github: #f0f6fc;
+            /* Lighter for dark mode text */
+        }
+
+        /* --- GLOBAL RESET --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+        }
+
+        .logo i.fa-git-alt {
+            color: var(--primary-git);
+        }
+
+        /* Dark Mode Toggle Switch */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: white;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* --- CARDS SECTION --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 2rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .card h2 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .git-icon {
+            color: var(--primary-git);
+        }
+
+        /* Handle github icon color change in dark mode via CSS variable or specific override */
+        .github-icon {
+            color: #24292e;
+        }
+
+        [data-theme="dark"] .github-icon {
+            color: white;
+        }
+
+        .card ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card li i {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        /* --- WORKFLOW --- */
+        .workflow {
+            text-align: center;
+            margin: 4rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .workflow img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        /* --- CHEATSHEET --- */
+        .cheatsheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 40px 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background-color: var(--bg-body);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--code-bg);
+            padding: 5px 8px;
+            border-radius: 4px;
+            color: var(--primary-git);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .cheatsheet-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <div class="logo">
+                <h1><i class="fab fa-git-alt"></i> Guide</h1>
+            </div>
+            <div class="theme-switch-wrapper">
+                <span style="margin-right: 10px; font-size: 0.9rem;">Dark Mode</span>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider"></div>
+                </label>
+            </div>
+        </header>
+
+        <section class="grid-2">
+            <div class="card">
+                <h2><i class="fab fa-git-alt git-icon"></i> Git</h2>
+                <p style="color: var(--text-muted);">The Version Control System</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> Installed locally on your machine</li>
+                    <li><i class="fas fa-check"></i> Tracks history of changes</li>
+                    <li><i class="fas fa-check"></i> Works offline</li>
+                    <li><i class="fas fa-check"></i> Handles branching & merging</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2><i class="fab fa-github github-icon"></i> GitHub</h2>
+                <p style="color: var(--text-muted);">The Cloud Platform</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> Hosted on the web</li>
+                    <li><i class="fas fa-check"></i> Backup for your local code</li>
+                    <li><i class="fas fa-check"></i> Collaboration (Pull Requests)</li>
+                    <li><i class="fas fa-check"></i> Social coding network</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="workflow">
+            <h2><i class="fas fa-project-diagram"></i> The Basic Workflow</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1rem;">From your laptop to the cloud.</p>
+
+
+
+            <div style="margin-top:20px; font-family: monospace;">
+                <span style="color: var(--primary-git);">git add</span> &rarr;
+                <span style="color: var(--primary-git);">git commit</span> &rarr;
+                <span style="color: var(--accent);">git push</span>
+            </div>
+        </section>
+
+        <section>
+            <div class="cheatsheet-header">
+                <h2>Command Cheat Sheet</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search commands (e.g., 'commit')...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+
+            <table id="commandTable">
+                <thead>
+                    <tr>
+                        <th width="45%">Command</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git init</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git init')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Starts a new Git repository in the current folder.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git clone [url]</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git clone [url]')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Downloads a repository from GitHub to your computer.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git status</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git status')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Shows modified files and what is staged for commit.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git add .</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git add .')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Stages all changed files.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git commit -m "msg"</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git commit -m &quot;msg&quot;')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Saves the staged snapshot with a message.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git push origin main</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git push origin main')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Uploads local commits to the GitHub repository.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="code-block">
+                                <span>git pull</span>
+                                <button class="copy-btn" onclick="copyToClipboard('git pull')"><i
+                                        class="far fa-copy"></i></button>
+                            </div>
+                        </td>
+                        <td>Updates your local code with changes from GitHub.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p id="noResults" style="text-align:center; padding: 20px; display:none; color: var(--text-muted);">No
+                commands found matching your search.</p>
+        </section>
+
+    </div>
+
+    <script>
+        // --- 1. Dark Mode Logic ---
+        const toggleSwitch = document.querySelector('#checkbox');
+        const currentTheme = localStorage.getItem('theme');
+
+        // Check for saved theme preference
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        function switchTheme(e) {
+            if (e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
+
+        // --- 2. Search Filter Logic ---
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('commandTable');
+        const tr = table.getElementsByTagName('tr');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('keyup', function () {
+            const filter = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            // Loop through all table rows, excluding the header
+            for (let i = 1; i < tr.length; i++) {
+                // Get text from Command (col 0) and Description (col 1)
+                let tdCommand = tr[i].getElementsByTagName('td')[0];
+                let tdDesc = tr[i].getElementsByTagName('td')[1];
+
+                if (tdCommand || tdDesc) {
+                    let txtValueCmd = tdCommand.textContent || tdCommand.innerText;
+                    let txtValueDesc = tdDesc.textContent || tdDesc.innerText;
+
+                    if (txtValueCmd.toLowerCase().indexOf(filter) > -1 || txtValueDesc.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                        visibleCount++;
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+
+            // Toggle "No Results" message
+            if (visibleCount === 0) {
+                noResults.style.display = "block";
+                table.style.display = "none";
+            } else {
+                noResults.style.display = "none";
+                table.style.display = "table";
+            }
+        });
+
+
+        // --- 3. Copy to Clipboard Logic ---
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('Copied: ' + text);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("Copy");
+                textArea.remove();
+                alert('Copied: ' + text);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
